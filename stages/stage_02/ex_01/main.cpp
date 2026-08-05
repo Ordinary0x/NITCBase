@@ -39,23 +39,6 @@ int main(int argc, char *argv[]) {
           const char *attrType = attrCatRecord[ATTRCAT_ATTR_TYPE_INDEX].nVal == NUMBER ? "NUM" : "STR";
           printf("  %s: %s\n", attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, attrType);
         }
-        
-        if(strcmp(attrCatRecord[ATTRCAT_REL_NAME_INDEX].sVal, "Students") == 0 && strcmp(attrCatRecord[ATTRCAT_REL_NAME_INDEX].sVal,relCatRecord[RELCAT_REL_NAME_INDEX].sVal)==0) {
-          if(strcmp(attrCatRecord[1].sVal,"Class")==0){
-              strcpy(attrCatRecord[1].sVal,"Batch");
-               unsigned char buffer[BLOCK_SIZE];
-               Disk::readBlock(buffer, attrCatHeader.blockType);
-               int start=32+attrCatHeader.numSlots+(16*attrCatHeader.numAttrs*j);
-               memcpy(buffer+start,attrCatRecord,16*attrCatHeader.numAttrs);
-               Disk::writeBlock(buffer,attrCatHeader.blockType);
-
-               std::cout << "Updated attribute name from 'Class' to 'Batch' for relation 'Students'." << std::endl;
-          const char *attrType = attrCatRecord[ATTRCAT_ATTR_TYPE_INDEX].nVal == NUMBER ? "NUM" : "STR";
-          printf("  %s: %s\n\n", attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, attrType);
-          }
-          
-        }
-
       }
       
       if (attrCatHeader.rblock == -1){

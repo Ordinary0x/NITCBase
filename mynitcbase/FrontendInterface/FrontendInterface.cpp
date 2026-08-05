@@ -1,4 +1,5 @@
 // clang-format off
+#include <sstream>
 #include <cstring>
 #include <fstream>
 #include <string>
