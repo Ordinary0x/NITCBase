@@ -26,16 +26,6 @@ int main(int argc, char *argv[]) {
       }
       std::string attrType=(attrCat.attrType==NUMBER)?"NUM":"STR";
       std::cout<<"  "<<attrCat.attrName<<": "<<attrType<<"\n";
-      if(strcmp(relCat.relName,"Students") == 0 && strcmp(attrCat.relName,relCat.relName)==0) {
-          if(strcmp(attrCat.attrName,"Class")==0){
-              strcpy(attrCat.attrName,"Batch");
-
-               std::cout << "Updated attribute from 'Class' to 'Batch'" << std::endl;
-              std::string attrType=(attrCat.attrType==NUMBER)?"NUM":"STR";
-              std::cout<<"  "<<attrCat.attrName<<": "<<attrType<<"\n";
-          }
-        }
-      
     }
   }
   return 0;

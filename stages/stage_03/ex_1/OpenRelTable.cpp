@@ -176,12 +176,12 @@ AttrCacheTable::attrCache[studentsSlot]=head3;
 
 OpenRelTable::~OpenRelTable() {
   // free all the memory that you allocated in the constructor
-  for(int i=0;i<=2;i++){
+  for(int i=0;i<2;i++){
         free(RelCacheTable::relCache[i]);
         RelCacheTable::relCache[i]=nullptr;
     }
 
-    for(int i=0;i<=2;i++){
+    for(int i=0;i<2;i++){
         AttrCacheEntry *curr=AttrCacheTable::attrCache[i];
         while(curr!=nullptr){
             AttrCacheEntry *next=curr->next;

@@ -45,7 +45,6 @@ OpenRelTable::OpenRelTable() {
   RelCacheTable::relCache[ATTRCAT_RELID] = (struct RelCacheEntry*)malloc(sizeof(RelCacheEntry));
     *(RelCacheTable::relCache[ATTRCAT_RELID]) = attrCatCacheEntry;
 
-
   /************ Setting up Attribute cache entries ************/
   // (we need to populate attribute cache with entries for the relation catalog
   //  and attribute catalog.)
@@ -112,76 +111,16 @@ OpenRelTable::OpenRelTable() {
   }
   // set the value at AttrCacheTable::attrCache[ATTRCAT_RELID]
   AttrCacheTable::attrCache[ATTRCAT_RELID] = head;
-
-/************ Setting up Student relation in  the Relation Cache Table ************/
-// find Students' record in the relation catalog
-int studentsSlot=-1;
-Attribute studentsRelRecord[RELCAT_NO_ATTRS];
-
-  for(int slot=0;slot<20;slot++){
-    if(relCatBlock.getRecord(studentsRelRecord,slot)!=SUCCESS){
-        break;
-    }
-    if(strcmp(studentsRelRecord[0].sVal,"Students")==0){
-        studentsSlot=slot;
-        break;
-    }
-  }
-
-  struct RelCacheEntry studCatCacheEntry;
-  RelCacheTable::recordToRelCatEntry(studentsRelRecord,&studCatCacheEntry.relCatEntry);
-  studCatCacheEntry.recId.block = RELCAT_BLOCK;
-  studCatCacheEntry.recId.slot = studentsSlot;
-
-  RelCacheTable::relCache[2] = (struct RelCacheEntry*)malloc(sizeof(RelCacheEntry));
-  *(RelCacheTable::relCache[2]) = studCatCacheEntry;
-
-  
-/************ Setting up Student Attributes in the Attribute Cache Table ************/
-
-int numAttrs = studCatCacheEntry.relCatEntry.numAttrs;
-int found = 0;
-int slot = 0;
-
-struct AttrCacheEntry *head3 = nullptr;
-struct AttrCacheEntry *tail3 = nullptr;
-
-while(found < numAttrs){
-    Attribute studentsAttrRecord[ATTRCAT_NO_ATTRS];
-    if(attrCatBlock.getRecord(studentsAttrRecord, slot) != SUCCESS){
-        break;
-    }
-    if(strcmp(studentsAttrRecord[0].sVal, "Students") == 0){
-        struct AttrCacheEntry *entry = (struct AttrCacheEntry*)malloc(sizeof(AttrCacheEntry));
-        AttrCacheTable::recordToAttrCatEntry(studentsAttrRecord, &entry->attrCatEntry);
-        entry->next = nullptr;
-        entry->recId.block = ATTRCAT_BLOCK;
-        entry->recId.slot = slot;
-
-        if(head3 == nullptr){
-            head3 = entry;
-        }
-        else{
-            tail3->next = entry;
-        }
-        tail3 = entry;
-        found++;
-    }
-    slot++;
 }
-
-AttrCacheTable::attrCache[studentsSlot]=head3;
-}
-
 
 OpenRelTable::~OpenRelTable() {
   // free all the memory that you allocated in the constructor
-  for(int i=0;i<=2;i++){
+  for(int i=0;i<2;i++){
         free(RelCacheTable::relCache[i]);
         RelCacheTable::relCache[i]=nullptr;
     }
 
-    for(int i=0;i<=2;i++){
+    for(int i=0;i<2;i++){
         AttrCacheEntry *curr=AttrCacheTable::attrCache[i];
         while(curr!=nullptr){
             AttrCacheEntry *next=curr->next;
