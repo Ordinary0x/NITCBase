@@ -12,36 +12,6 @@ int main(int argc, char *argv[]) {
   StaticBuffer buffer;
   OpenRelTable cache;
   
-  for(int relid = 0; relid < MAX_OPEN;relid++){
-    RelCatEntry relCat;
-    if(RelCacheTable::getRelCatEntry(relid, &relCat)!=SUCCESS){
-      continue;
-    }
-    printf("Relation: %s\n", relCat.relName);
-
-    for(int i=0;i<relCat.numAttrs;i++){
-      AttrCatEntry attrCat;
-      if(AttrCacheTable::getAttrCatEntry(relid,i,&attrCat)!=SUCCESS){
-        continue;
-      }
-      std::string attrType=(attrCat.attrType==NUMBER)?"NUM":"STR";
-      std::cout<<"  "<<attrCat.attrName<<": "<<attrType<<"\n";
-      if(strcmp(relCat.relName,"Students") == 0 && strcmp(attrCat.relName,relCat.relName)==0) {
-          if(strcmp(attrCat.attrName,"Class")==0){
-              strcpy(attrCat.attrName,"Batch");
-
-               std::cout << "Updated attribute from 'Class' to 'Batch'" << std::endl;
-              std::string attrType=(attrCat.attrType==NUMBER)?"NUM":"STR";
-              std::cout<<"  "<<attrCat.attrName<<": "<<attrType<<"\n";
-          }
-        }
-      
-    }
-  }
-  return 0;
-  // StaticBuffer buffer;
-
-  // OpenRelTable cache;
-
-  // return FrontendInterface::handleFrontend(argc, argv);
+  return FrontendInterface::handleFrontend(argc, argv);
 }
+
