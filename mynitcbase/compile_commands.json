@@ -1,0 +1,158 @@
+[
+  {
+    "file": "main.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/main.o",
+      "-c",
+      "main.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/main.o"
+  },
+  {
+    "file": "FrontendInterface/FrontendInterface.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/FrontendInterface/FrontendInterface.o",
+      "-c",
+      "FrontendInterface/FrontendInterface.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/FrontendInterface/FrontendInterface.o"
+  },
+  {
+    "file": "Frontend/Frontend.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Frontend/Frontend.o",
+      "-c",
+      "Frontend/Frontend.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Frontend/Frontend.o"
+  },
+  {
+    "file": "Algebra/Algebra.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Algebra/Algebra.o",
+      "-c",
+      "Algebra/Algebra.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Algebra/Algebra.o"
+  },
+  {
+    "file": "Schema/Schema.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Schema/Schema.o",
+      "-c",
+      "Schema/Schema.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Schema/Schema.o"
+  },
+  {
+    "file": "BlockAccess/BlockAccess.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/BlockAccess/BlockAccess.o",
+      "-c",
+      "BlockAccess/BlockAccess.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/BlockAccess/BlockAccess.o"
+  },
+  {
+    "file": "BPlusTree/BPlusTree.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/BPlusTree/BPlusTree.o",
+      "-c",
+      "BPlusTree/BPlusTree.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/BPlusTree/BPlusTree.o"
+  },
+  {
+    "file": "Cache/AttrCacheTable.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Cache/AttrCacheTable.o",
+      "-c",
+      "Cache/AttrCacheTable.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Cache/AttrCacheTable.o"
+  },
+  {
+    "file": "Cache/OpenRelTable.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Cache/OpenRelTable.o",
+      "-c",
+      "Cache/OpenRelTable.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Cache/OpenRelTable.o"
+  },
+  {
+    "file": "Cache/RelCacheTable.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Cache/RelCacheTable.o",
+      "-c",
+      "Cache/RelCacheTable.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Cache/RelCacheTable.o"
+  },
+  {
+    "file": "Buffer/BlockBuffer.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Buffer/BlockBuffer.o",
+      "-c",
+      "Buffer/BlockBuffer.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Buffer/BlockBuffer.o"
+  },
+  {
+    "file": "Buffer/StaticBuffer.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Buffer/StaticBuffer.o",
+      "-c",
+      "Buffer/StaticBuffer.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Buffer/StaticBuffer.o"
+  },
+  {
+    "file": "Disk_Class/Disk.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "-o",
+      "build/Disk_Class/Disk.o",
+      "-c",
+      "Disk_Class/Disk.cpp"
+    ],
+    "directory": "/home/sharad/lab/NITCBase/mynitcbase",
+    "output": "build/Disk_Class/Disk.o"
+  }
+]
