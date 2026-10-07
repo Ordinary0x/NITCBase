@@ -11,7 +11,17 @@ BlockBuffer::BlockBuffer(int blockNum){
 BlockBuffer::BlockBuffer(char blockType){
     // allocate a block on the disk and a buffer in memory to hold the new block of
     // given type using getFreeBlock function and get the return error codes if any.
-    int blockNum = getFreeBlock(blockType);
+    int type=UNUSED_BLK;
+    if(blockType=='R'){
+        type=0;
+    }
+    else if(blockType=='I'){
+        type=1;
+    }
+    else if(blockType=='L'){
+        type=2;
+    }
+    int blockNum = getFreeBlock(type);
     if(blockNum < 0 || blockNum >= DISK_BLOCKS){
         std::cout << "Error: Unable to allocate block. Error code: " << blockNum << std::endl;
         this->blockNum = blockNum;
@@ -111,8 +121,8 @@ int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr) {
   if (bufferNum == E_BLOCKNOTINBUFFER) {
     bufferNum = StaticBuffer::getFreeBuffer(this->blockNum);
 
-    if (bufferNum == E_OUTOFBOUND) {
-      return E_OUTOFBOUND;
+    if (bufferNum == E_OUTOFBOUND || bufferNum == FAILURE) {
+      return bufferNum;
     }
 
     Disk::readBlock(StaticBuffer::blocks[bufferNum], this->blockNum);
@@ -120,12 +130,12 @@ int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr) {
   else{
     // set the timestamp of the corresponding buffer to 0 and increment the
     // timestamps of all other occupied buffers in BufferMetaInfo.
-    StaticBuffer::metainfo[bufferNum].timeStamp = 0;
     for(int i=0;i<BUFFER_CAPACITY;i++){
         if(i != bufferNum && StaticBuffer::metainfo[i].free == false){
             StaticBuffer::metainfo[i].timeStamp++;
         }
     }
+    StaticBuffer::metainfo[bufferNum].timeStamp = 0;
   }
 
   // store the pointer to this buffer (blocks[bufferNum]) in *buffPtr
@@ -292,7 +302,7 @@ int BlockBuffer::getFreeBlock(int blockType){
     // iterate through the StaticBuffer::blockAllocMap and find the block number
     // of a free block in the disk.
     int freeBlockNum = -1;
-    for(int i=0; i<DISK_BLOCKS; i++){
+    for(int i=4; i<DISK_BLOCKS; i++){
         if(StaticBuffer::blockAllocMap[i] == UNUSED_BLK){
             freeBlockNum = i;
             break;
@@ -308,7 +318,7 @@ int BlockBuffer::getFreeBlock(int blockType){
     // find a free buffer using StaticBuffer::getFreeBuffer() .
     unsigned char *bufferPtr;
     int bufferIndex = StaticBuffer::getFreeBuffer(freeBlockNum);
-    if (bufferIndex < 0 && bufferIndex >= BUFFER_CAPACITY) {
+    if (bufferIndex < 0 || bufferIndex >= BUFFER_CAPACITY) {
 		  printf ("Error: Buffer is full\n");
 		  return bufferIndex;
 	  }
@@ -370,3 +380,31 @@ int BlockBuffer::getBlockNum(){
     //return corresponding block number.
 }
 
+void BlockBuffer::releaseBlock()
+{
+    // if blockNum is INVALID_BLOCK (-1), or it is invalidated already, do nothing
+	if (blockNum == INVALID_BLOCKNUM || 
+		StaticBuffer::blockAllocMap[blockNum] == UNUSED_BLK)
+		return;
+
+	/* get the buffer number of the buffer assigned to the block
+		using StaticBuffer::getBufferNum().
+		(this function return E_BLOCKNOTINBUFFER if the block is not
+		currently loaded in the buffer)
+	*/
+	int bufferIndex = StaticBuffer::getBufferNum(blockNum);
+
+	// if the block is present in the buffer, free the buffer
+	// by setting the free flag of its StaticBuffer::tableMetaInfo entry
+	// to true.
+	if (bufferIndex >= 0 && bufferIndex < BUFFER_CAPACITY)
+		StaticBuffer::metainfo[bufferIndex].free = true;
+
+	// free the block in disk by setting the data type of the entry
+	// corresponding to the block number in StaticBuffer::blockAllocMap
+	// to UNUSED_BLK.
+	StaticBuffer::blockAllocMap[blockNum] = UNUSED_BLK;
+
+	// set the object's blockNum to INVALID_BLOCK (-1)
+	this->blockNum = INVALID_BLOCKNUM;
+}

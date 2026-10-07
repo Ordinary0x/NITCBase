@@ -7,8 +7,8 @@ struct BufferMetaInfo StaticBuffer::metainfo[BUFFER_CAPACITY];
 unsigned char StaticBuffer::blockAllocMap[DISK_BLOCKS];
 
 StaticBuffer::StaticBuffer() {
-  for(int blockIndex = 0 ; blockIndex < 4 ; blockIndex++){
-    int blockAllocMapSlot = 0;
+  for(int blockIndex = 0,blockAllocMapSlot = 0 ; blockIndex < 4 ; blockIndex++){
+    
     unsigned char block[BLOCK_SIZE];
     Disk::readBlock(block, blockIndex);
     for(int slot =0; slot < BLOCK_SIZE ; slot++){
@@ -27,48 +27,68 @@ StaticBuffer::StaticBuffer() {
 }
 
 
+// write back all modified blocks on system exit
 StaticBuffer::~StaticBuffer() {
-  for(int blockIndex = 0 ; blockIndex < 4 ; blockIndex++){
-    int blockAllocMapSlot = 0;
-    unsigned char block[BLOCK_SIZE];
-    for(int slot =0; slot < BLOCK_SIZE ; slot++){
-        block[slot] = blockAllocMap[blockAllocMapSlot];
-        blockAllocMapSlot++;
-    }
-    Disk::writeBlock(block, blockIndex);
-  }
+	for (int blockIndex = 0, blockAllocMapSlot = 0; blockIndex < 4; blockIndex++) {
+		unsigned char buffer [BLOCK_SIZE];
 
-  for(int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++){
-    if(metainfo[bufferIndex].free == false && metainfo[bufferIndex].dirty == true){
-        Disk::writeBlock(blocks[bufferIndex],metainfo[bufferIndex].blockNum);
-    }
-  }
+		for (int slot = 0; slot < BLOCK_SIZE; slot++, blockAllocMapSlot++) 
+			buffer[slot] = blockAllocMap[blockAllocMapSlot];
+
+		Disk::writeBlock(buffer, blockIndex);
+	}
+
+  	// iterate through all the buffer blocks, write back blocks 
+	// with metainfo as free=false,dirty=true using Disk::writeBlock()
+
+	for (int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++) {
+		if (metainfo[bufferIndex].free == false 
+			&& metainfo[bufferIndex].dirty == true)
+			Disk::writeBlock(blocks[bufferIndex], metainfo[bufferIndex].blockNum);
+	}
 }
+
+
 
 int StaticBuffer::getFreeBuffer(int blockNum) {
-  if (blockNum < 0 || blockNum > DISK_BLOCKS) {
-    return E_OUTOFBOUND;
-  }
-  int allocatedBuffer;
+	if (blockNum < 0 || blockNum >= DISK_BLOCKS) return E_OUTOFBOUND;
+	for (int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++)
+		metainfo[bufferIndex].timeStamp++;
 
-  // iterate through all the blocks in the StaticBuffer
-  // find the first free block in the buffer (check metainfo)
-  // assign allocatedBuffer = index of the free block
-  for (int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++) {
-    if(metainfo[bufferIndex].free == true){
-        allocatedBuffer = bufferIndex;
-        break;
-    }
-    if(bufferIndex == BUFFER_CAPACITY - 1){
-        return E_FREESLOT;
-    }
-  }
+	int allocatedBuffer = 0;
 
-  metainfo[allocatedBuffer].free = false;
-  metainfo[allocatedBuffer].blockNum = blockNum;
+	// TODO: iterate through all the blocks in the StaticBuffer
+	// TODO: find the first free block in the buffer (check metainfo)
+	// TODO: assign allocatedBuffer = index of the free block
+	for (; allocatedBuffer < BUFFER_CAPACITY; allocatedBuffer++)
+		if (metainfo[allocatedBuffer].free) break;
 
-  return allocatedBuffer;
+	if (allocatedBuffer == BUFFER_CAPACITY) {
+		int lastTimestamp = -1, bufferNum = -1;
+		for (int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++) {
+			if (metainfo[bufferIndex].timeStamp > lastTimestamp) {
+				lastTimestamp = metainfo[bufferIndex].timeStamp;
+				bufferNum = bufferIndex;
+			}
+		}
+
+		allocatedBuffer = bufferNum;
+		if (metainfo[allocatedBuffer].dirty == true) {
+			Disk::writeBlock(StaticBuffer::blocks[allocatedBuffer], 
+								metainfo[allocatedBuffer].blockNum);
+		}
+
+		// return FAILURE;
+	}
+
+	metainfo[allocatedBuffer].free = false, 
+	metainfo[allocatedBuffer].dirty = false,
+	metainfo[allocatedBuffer].timeStamp = 0, 
+	metainfo[allocatedBuffer].blockNum = blockNum;
+
+	return allocatedBuffer;
 }
+
 
 /* Get the buffer index where a particular block is stored
    or E_BLOCKNOTINBUFFER otherwise
@@ -76,13 +96,13 @@ int StaticBuffer::getFreeBuffer(int blockNum) {
 int StaticBuffer::getBufferNum(int blockNum) {
   // Check if blockNum is valid (between zero and DISK_BLOCKS)
   // and return E_OUTOFBOUND if not valid.
-  if(blockNum < 0 || blockNum > DISK_BLOCKS) {
+  if(blockNum < 0 || blockNum >= DISK_BLOCKS) {
     return E_OUTOFBOUND;
   }
 
   // find and return the bufferIndex which corresponds to blockNum (check metainfo)
   for (int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++){
-    if(metainfo[bufferIndex].blockNum == blockNum){
+    if(metainfo[bufferIndex].free == false && metainfo[bufferIndex].blockNum == blockNum){
         return bufferIndex;
     }
   }
