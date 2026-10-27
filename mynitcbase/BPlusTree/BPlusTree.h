@@ -22,5 +22,5 @@ class BPlusTree {
   static RecId bPlusSearch(int relId, char attrName[ATTR_SIZE], union Attribute attrVal, int op);
   static int bPlusDestroy(int rootBlockNum);
 };
-
+extern int comp_bt;
 #endif  // NITCBASE_BPLUSTREE_H

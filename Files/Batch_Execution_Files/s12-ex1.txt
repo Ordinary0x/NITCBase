@@ -1,0 +1,3 @@
+open table Events
+open table Locations
+SELECT name FROM Locations JOIN Events INTO EventLocations WHERE Locations.name=Events.location
