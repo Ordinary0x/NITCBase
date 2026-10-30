@@ -298,10 +298,12 @@ int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr) {
     }
 
     Disk::readBlock(StaticBuffer::blocks[bufferNum], this->blockNum);
+    read_count++;
   }
   else{
     // set the timestamp of the corresponding buffer to 0 and increment the
     // timestamps of all other occupied buffers in BufferMetaInfo.
+    
     for(int i=0;i<BUFFER_CAPACITY;i++){
         if(i != bufferNum && StaticBuffer::metainfo[i].free == false){
             StaticBuffer::metainfo[i].timeStamp++;
@@ -309,6 +311,7 @@ int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr) {
     }
     StaticBuffer::metainfo[bufferNum].timeStamp = 0;
   }
+
 
   // store the pointer to this buffer (blocks[bufferNum]) in *buffPtr
   *buffPtr = StaticBuffer::blocks[bufferNum];

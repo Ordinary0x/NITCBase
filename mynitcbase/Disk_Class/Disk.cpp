@@ -27,7 +27,10 @@ Disk::Disk() {
  */
 Disk::~Disk() {
   /* An efficient method to copy files */
-  /* Copy Disk Run Copy to Disk */
+  // /* Copy Disk Run Copy to Disk */
+  // std::cout << "Read Count: " << read_count << std::endl;
+  // std::cout << "Write Count: " << write_count << std::endl;
+
   std::ifstream src(DISK_RUN_COPY_PATH, std::ios::binary);
   std::ofstream dst(DISK_PATH, std::ios::binary);
 
@@ -71,3 +74,6 @@ int Disk::writeBlock(unsigned char *block, int blockNum) {
   fclose(disk);
   return SUCCESS;
 }
+
+int read_count = 0;
+int write_count = 0;

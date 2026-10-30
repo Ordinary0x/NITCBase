@@ -6,11 +6,13 @@ unsigned char StaticBuffer::blocks[BUFFER_CAPACITY][BLOCK_SIZE];
 struct BufferMetaInfo StaticBuffer::metainfo[BUFFER_CAPACITY];
 unsigned char StaticBuffer::blockAllocMap[DISK_BLOCKS];
 
+
 StaticBuffer::StaticBuffer() {
   for(int blockIndex = 0,blockAllocMapSlot = 0 ; blockIndex < 4 ; blockIndex++){
     
     unsigned char block[BLOCK_SIZE];
     Disk::readBlock(block, blockIndex);
+    read_count++;
     for(int slot =0; slot < BLOCK_SIZE ; slot++){
         blockAllocMap[blockAllocMapSlot] = block[slot];
         blockAllocMapSlot++;
@@ -36,6 +38,7 @@ StaticBuffer::~StaticBuffer() {
 			buffer[slot] = blockAllocMap[blockAllocMapSlot];
 
 		Disk::writeBlock(buffer, blockIndex);
+    write_count++;
 	}
 
   	// iterate through all the buffer blocks, write back blocks 
@@ -43,8 +46,10 @@ StaticBuffer::~StaticBuffer() {
 
 	for (int bufferIndex = 0; bufferIndex < BUFFER_CAPACITY; bufferIndex++) {
 		if (metainfo[bufferIndex].free == false 
-			&& metainfo[bufferIndex].dirty == true)
+			&& metainfo[bufferIndex].dirty == true){
 			Disk::writeBlock(blocks[bufferIndex], metainfo[bufferIndex].blockNum);
+      write_count++;
+      }
 	}
 }
 
@@ -76,6 +81,7 @@ int StaticBuffer::getFreeBuffer(int blockNum) {
 		if (metainfo[allocatedBuffer].dirty == true) {
 			Disk::writeBlock(StaticBuffer::blocks[allocatedBuffer], 
 								metainfo[allocatedBuffer].blockNum);
+      write_count++;
 		}
 
 		// return FAILURE;

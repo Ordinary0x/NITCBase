@@ -7,4 +7,7 @@ class Disk {
   static int readBlock(unsigned char *block, int blockNum);
   static int writeBlock(unsigned char *block, int blockNum);
 };
+extern int read_count;
+extern int write_count;
+
 #endif  // NITCBASE_H

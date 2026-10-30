@@ -44,6 +44,8 @@ OpenRelTable::OpenRelTable() {
   RelCacheTable::recordToRelCatEntry(relCatRecord,&attrCatCacheEntry.relCatEntry);
   attrCatCacheEntry.recId.block = RELCAT_BLOCK;
   attrCatCacheEntry.recId.slot = RELCAT_SLOTNUM_FOR_ATTRCAT;
+  attrCatCacheEntry.searchIndex = {-1, -1};
+  attrCatCacheEntry.dirty = false;
 
   // set the value at RelCacheTable::relCache[ATTRCAT_RELID]
   RelCacheTable::relCache[ATTRCAT_RELID] = (struct RelCacheEntry*)malloc(sizeof(RelCacheEntry));

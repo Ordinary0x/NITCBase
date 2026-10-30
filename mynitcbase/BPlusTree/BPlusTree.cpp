@@ -2,6 +2,8 @@
 #include<iostream>
 #include <cstring>
 int comp_bt = 0;  
+int blk_count_bt = 0;
+int bt_prev_block = -1;
 
 RecId BPlusTree::bPlusSearch(int relId, char attrName[ATTR_SIZE], Attribute attrVal, int op) {
     // declare searchIndex which will be used to store search index for attrName.
@@ -38,7 +40,6 @@ RecId BPlusTree::bPlusSearch(int relId, char attrName[ATTR_SIZE], Attribute attr
 
         // load block into leaf using IndLeaf::IndLeaf().
         IndLeaf leaf(block);
-
         // declare leafHead which will be used to hold the header of leaf.
         HeadInfo leafHead;
         leaf.getHeader(&leafHead); 
@@ -70,9 +71,10 @@ RecId BPlusTree::bPlusSearch(int relId, char attrName[ATTR_SIZE], Attribute attr
         and the test condition in the following loop will fail)
     */
     
-
     while(StaticBuffer::getStaticBlockType(block) == IND_INTERNAL) {  //use StaticBuffer::getStaticBlockType()
 
+        if(block != bt_prev_block) blk_count_bt++;
+        bt_prev_block = block;
         // load the block into internalBlk using IndInternal::IndInternal().
         IndInternal internalBlk(block);
 
@@ -149,9 +151,12 @@ RecId BPlusTree::bPlusSearch(int relId, char attrName[ATTR_SIZE], Attribute attr
 
     /******  Identify the first leaf index entry from the current position
                 that satisfies our condition (moving right)             ******/
-
+    
+    
     while (block != -1) {
         // load the block into leafBlk using IndLeaf::IndLeaf().
+        if(block != bt_prev_block) blk_count_bt++;
+        bt_prev_block = block;
         IndLeaf leafBlk(block);
         HeadInfo leafHead;
 
@@ -211,6 +216,7 @@ RecId BPlusTree::bPlusSearch(int relId, char attrName[ATTR_SIZE], Attribute attr
         // block = next block in the linked list, i.e., the rblock in leafHead.
         // update index to 0.
         block = leafHead.rblock;
+
         index = 0;
     }
     // no entry satisying the op was found; return the recId {-1,-1}
@@ -315,7 +321,7 @@ int BPlusTree::bPlusCreate(int relId, char attrName[ATTR_SIZE]) {
         // set block = rblock of current block (from the header)
         block = head.rblock;
     }
-
+    max_key_count_leaf(attrCatEntry.rootBlock);
     return SUCCESS;
 }
 
@@ -884,4 +890,44 @@ int BPlusTree::createNewRoot(int relId, char attrName[ATTR_SIZE], Attribute attr
     AttrCacheTable::setAttrCatEntry(relId, attrName, &attrCatEntry);
 
     return SUCCESS;
+}
+
+void BPlusTree::max_key_count_leaf(int rootBlockNum) {
+
+    int block = rootBlockNum;
+    while(StaticBuffer::getStaticBlockType(block) == IND_INTERNAL) {
+        IndInternal internalBlk(block);
+        HeadInfo internalHead;
+        internalBlk.getHeader(&internalHead);
+        InternalEntry intEntry;
+        internalBlk.getEntry(&intEntry, 0);
+        block = intEntry.lChild;
+    }   
+    int maxKeyCount = 0;
+    int max_block = -1;
+    while(block != -1) {
+        IndLeaf leafBlk(block);
+        HeadInfo leafHead;
+        leafBlk.getHeader(&leafHead);
+        if(leafHead.numEntries > maxKeyCount) {
+            maxKeyCount = leafHead.numEntries;
+            max_block = block;
+        }
+        block = leafHead.rblock;
+    }
+
+    std::cout << "Max key count in leaf block: " << maxKeyCount << " (Block: " << max_block << ")" << std::endl;
+    IndLeaf printblock(max_block);
+    HeadInfo printhead;
+    printblock.getHeader(&printhead);
+    for(int i = 0; i < printhead.numEntries; i++) {
+        Index printEntry;
+
+        printblock.getEntry(&printEntry, i);
+        printf("attrVal: %d\n", printEntry.attrVal);
+    }
+}
+
+void BPlusTree::max_key_count_internal(int rootBlockNum) {
+    
 }

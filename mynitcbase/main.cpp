@@ -11,7 +11,8 @@ int main(int argc, char *argv[]) {
   Disk disk_run;
   StaticBuffer buffer;
   OpenRelTable cache;
-  
+  read_count = 0;
+  write_count = 0;
   return FrontendInterface::handleFrontend(argc, argv);
 }
 

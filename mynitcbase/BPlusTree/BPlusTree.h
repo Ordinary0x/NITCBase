@@ -21,6 +21,10 @@ class BPlusTree {
   static int bPlusInsert(int relId, char attrName[ATTR_SIZE], union Attribute attrVal, RecId recordId);
   static RecId bPlusSearch(int relId, char attrName[ATTR_SIZE], union Attribute attrVal, int op);
   static int bPlusDestroy(int rootBlockNum);
+  static void max_key_count_leaf(int rootBlockNum);
+  static void max_key_count_internal(int rootBlockNum);
 };
 extern int comp_bt;
+extern int blk_count_bt;
+extern int bt_prev_block;
 #endif  // NITCBASE_BPLUSTREE_H

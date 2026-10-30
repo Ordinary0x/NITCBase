@@ -199,7 +199,11 @@ int Algebra::select(char srcRel[ATTR_SIZE], char targetRel[ATTR_SIZE], char attr
 
     // read every record that satisfies the condition by repeatedly calling
     // BlockAccess::search() until there are no more records to be read
-    comp_bt = 0;
+    // comp_bt = 0;
+    // blk_count_bt = 0;
+    // blk_count_linear = 0;
+    // linear_prev_block = -1;
+    // bt_prev_block = -1;
     while (BlockAccess::search(srcRelId, record, attr, attrVal, op) == SUCCESS) {
 
         // ret = BlockAccess::insert(targetRelId, record);
@@ -219,7 +223,10 @@ int Algebra::select(char srcRel[ATTR_SIZE], char targetRel[ATTR_SIZE], char attr
 
     // Close the targetRel by calling closeRel() method of schema layer
 
-    std::cout<<"Number of comparisons in BPlusTree search : "<<comp_bt<<std::endl;
+    // std::cout<<"Number of comparisons in BPlusTree search : "<<comp_bt<<std::endl;
+    // std::cout<<"Number of blocks accessed in BPlusTree search : "<<blk_count_bt<<std::endl;
+    // std::cout<<"Number of blocks accessed in linear search : "<<blk_count_linear<<std::endl;
+
     ret = Schema::closeRel(targetRel);
     if (ret != SUCCESS) {
         return ret;
@@ -412,7 +419,7 @@ int Algebra::project(char srcRel[ATTR_SIZE], char targetRel[ATTR_SIZE], int tar_
 
     Schema::closeRel(targetRel);
     // Close the targetRel by calling Schema::closeRel()
-    std::cout<<"NO of records inserted in project: "<<count<<"\n";
+    // std::cout<<"NO of records inserted in project: "<<count<<"\n";
     return SUCCESS;
 }
 

@@ -24,5 +24,6 @@ class BlockAccess {
 
   static int project(int relId, Attribute *record);
 };
-
+extern int linear_prev_block;
+extern int blk_count_linear;
 #endif  // NITCBASE_BLOCKACCESS_H

@@ -2,6 +2,8 @@
 // #include "Cache/RelCacheTable.h"
 #include <cstring>
 #include<iostream>
+int blk_count_linear = 0;
+int linear_prev_block = -1;
 
 RecId BlockAccess::linearSearch(int relId, char attrName[ATTR_SIZE], union Attribute attrVal, int op) {
     // get the previous search index of the relation relId from the relation cache
@@ -44,7 +46,9 @@ RecId BlockAccess::linearSearch(int relId, char attrName[ATTR_SIZE], union Attri
        records of the relation
     */
     while (block != -1)
-    {
+    {   
+        if(block != linear_prev_block) blk_count_linear++;
+        linear_prev_block = block;
         /* create a RecBuffer object for block (use RecBuffer Constructor for
            existing block) */
         RecBuffer recordBlock(block);
@@ -120,7 +124,7 @@ RecId BlockAccess::linearSearch(int relId, char attrName[ATTR_SIZE], union Attri
 
         slot++;
     }
-    std::cout<<"Number of comparisons in linearSearch : "<<comp<<std::endl;
+    // std::cout<<"Number of comparisons in linearSearch : "<<comp<<std::endl;
     // no record in the relation with Id relid satisfies the given condition
     RelCacheTable::resetSearchIndex(relId);
     return RecId{-1, -1};
